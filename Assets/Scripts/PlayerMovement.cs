@@ -16,14 +16,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveHorizontally;
     [SerializeField] private float moveVertical;
     
+    [Header("Jumping info")]
     [SerializeField] private float jumpForce = 16f;
+    [SerializeField] private float jumpTime;
+    private float jumpTimeCounter;
+    private bool isJumping;
     
     [Header("Dashing info")]
     [SerializeField] private float dashingPower = 24f;
     [SerializeField] private float dashingTime = 0.2f;
     private bool canDash = true;
     private bool isDashing;
-    private Vector2 dashingDir;
 
     [Header("Collision info")]
     [SerializeField] private Transform groundCheck;
@@ -68,9 +71,30 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetButtonDown("Jump") && isGrounded)
         {
+            isJumping = true;
+            jumpTimeCounter = jumpTime;
             Jump();
         }
-        else if(Input.GetButtonDown("Jump") && canDash)
+
+        if(Input.GetButton("Jump") && isJumping)
+        {
+            if(jumpTimeCounter > 0)
+            {
+                Jump();
+                jumpTimeCounter -= Time.deltaTime;
+            }
+            else
+            {
+                isJumping = false;
+            }
+        }
+
+        if(Input.GetButtonUp("Jump"))
+        {
+            isJumping = false;
+        }
+        
+        if(Input.GetButtonDown("Dash") && canDash)
         {
             StartCoroutine(Dash());
         }
@@ -96,10 +120,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump()
     {
-        if(isGrounded)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-        }
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+
     }
 
     private IEnumerator Dash()
@@ -108,8 +130,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
-        dashingDir = new Vector2(moveHorizontally, moveVertical);
-        rb.velocity = new Vector2(moveHorizontally * dashingPower, moveVertical * dashingPower/2);
+        rb.velocity = new Vector2(moveHorizontally * dashingPower, moveVertical * dashingPower*.75f);
         yield return new WaitForSeconds(dashingTime);
         rb.gravityScale = originalGravity;
         isDashing = false;
@@ -150,9 +171,4 @@ public class PlayerMovement : MonoBehaviour
 
         anim.SetInteger("state", (int)state);
     }
-
-    // private bool IsGrounded()
-    // {
-    //     return Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down, .1f, jumpableGround);
-    // }
 }
