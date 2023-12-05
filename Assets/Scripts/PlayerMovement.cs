@@ -35,6 +35,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = true;
 
 
+    private bool isClimbing = false;
+
+
     private enum MovementState {idle, running, jumping, falling};
 
     // Start is called before the first frame update
@@ -69,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if(Input.GetButtonDown("Jump") && isGrounded)
+        if(Input.GetButtonDown("Jump") && (isGrounded || isClimbing))
         {
             isJumping = true;
             jumpTimeCounter = jumpTime;
@@ -105,7 +108,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
         CollisionCheck();
-        UpdateAnimationState(); 
+        UpdateAnimationState();
+
+        if(Input.GetKeyDown(KeyCode.W) && isClimbing)
+        {
+            ClimbVine();
+        }
     }
 
     private void FixedUpdate()
@@ -170,5 +178,33 @@ public class PlayerMovement : MonoBehaviour
         }
 
         anim.SetInteger("state", (int)state);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag != "Vine")
+        {
+            return;
+        }
+        Debug.Log("VINE!!");
+        isClimbing = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag != "Vine")
+        {
+            return;
+        }
+        Debug.Log("NO VINE!!");
+        isClimbing = false;
+        
+    }
+
+    private void ClimbVine()
+    {
+        float climbSpeed = 100f;
+        transform.Translate(Vector3.up * climbSpeed * Time.deltaTime);
+
     }
 }
