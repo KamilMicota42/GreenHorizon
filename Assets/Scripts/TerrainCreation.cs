@@ -6,9 +6,12 @@ using UnityEngine;
 public class TerrainCreation : MonoBehaviour
 {
     public LayerMask layers;
-    public float maxCreationDistance = 50;
     public GameObject vineTile;
     public GameObject bridgeTile;
+    private Vector3 scaleChange, positionChange;
+    private float moveHorizontally;
+    [SerializeField] private float creationDistance = 10f;
+    private bool isBridgeExsist = false; 
 
 
     // Start is called before the first frame update
@@ -20,69 +23,42 @@ public class TerrainCreation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            createVine();
-        }
+        moveHorizontally = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            createBridge();
-        }
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            createBridgeBackwards();
+            createBridge(moveHorizontally);
         }
+
     }
 
-    void createVine()
+
+    void createBridge(float moveHorizontally)
     {
-        //dado um ponto de origem e um ponto de fim, "disparar um raio" para criação do novo terreno
-        //o raycast "descobre" se os novos game objects podem ser criados, e se sim, até onde/quantos
-        //bool isHit = Physics2D.Raycast(transform.position, Vector3.up, out RaycastHit hitInfo, maxVineDistance, layers);
-        //Vector3 something = hitInfo.point;
-        //encontrar, para o caminho da vine, o terreno que colide com o caminho do raycast.
-        //ao colidir, perceber a layer com que está a colidir (idealmente ground, ignorar o player)
+        int layerToSet = 6;
 
-
-        RaycastHit2D raycastResult = Physics2D.Raycast(transform.position, Vector2.up, maxCreationDistance, layers);
-        Vector2 vetorCriacao = raycastResult.point;
-        float creationDistance = vetorCriacao.y - transform.position.y;
-
-        //vine creation (iterate the number of times indicated by the raycast result, upwards)
-        for (int i = 0; i < creationDistance; i++)
+        if(moveHorizontally > 0 && !isBridgeExsist)
         {
-            GameObject.Instantiate(vineTile, new Vector3(transform.position.x, transform.position.y + i), Quaternion.identity);
+            scaleChange = new Vector3(creationDistance, 0f, 0f);
+            GameObject bridgeObject = GameObject.Instantiate(bridgeTile, new Vector3(transform.position.x + (creationDistance / 2), transform.position.y - 1), Quaternion.identity);
+            bridgeObject.transform.localScale += scaleChange;
+            bridgeObject.layer = layerToSet;
+            isBridgeExsist = true;
+
+            Destroy(bridgeObject, 3);
+            isBridgeExsist = false;
         }
-       
-    }
-
-    void createBridge()
-    {
-        Vector3 raycastStartPoint = new Vector3(transform.position.x + 1, transform.position.y - 2, transform.position.z);
-        RaycastHit2D raycastResult = Physics2D.Raycast(raycastStartPoint, Vector2.right, maxCreationDistance, layers);
-        Vector2 vetorCriacao = raycastResult.point;
-        float creationDistance = vetorCriacao.x - transform.position.x;
-
-        //vine creation (iterate the number of times indicated by the raycast result, to the right)
-        for (int i = 1; i < creationDistance; i++)
+        if (moveHorizontally < 0 && !isBridgeExsist)
         {
-            GameObject.Instantiate(bridgeTile, new Vector3(transform.position.x + i, transform.position.y - 1), Quaternion.identity);
-        }
-    }
+            scaleChange = new Vector3(creationDistance, 0f, 0f);
+            GameObject bridgeObject = GameObject.Instantiate(bridgeTile, new Vector3(transform.position.x - (creationDistance / 2), transform.position.y - 1), Quaternion.identity);
+            bridgeObject.transform.localScale += scaleChange;
+            bridgeObject.layer = layerToSet;
+            isBridgeExsist = true;
 
-    void createBridgeBackwards()
-    {
-        Vector3 raycastStartPoint = new Vector3(transform.position.x - 1, transform.position.y - 2, transform.position.z);
-        RaycastHit2D raycastResult = Physics2D.Raycast(raycastStartPoint, Vector2.left, maxCreationDistance, layers);
-        Vector2 vetorCriacao = raycastResult.point;
-        float creationDistance = Math.Abs(vetorCriacao.x - transform.position.x);
-        
-        //vine creation (iterate the number of times indicated by the raycast result, to the right)
-        for (int i = 1; i < creationDistance; i++)
-        {
-            GameObject.Instantiate(bridgeTile, new Vector3(transform.position.x - i, transform.position.y - 1), Quaternion.identity);
+            Destroy(bridgeObject, 3);
+            isBridgeExsist = false;
         }
     }
 }

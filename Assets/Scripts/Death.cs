@@ -28,6 +28,7 @@ public class Death : MonoBehaviour
 
     void loadCurrentScene()
     {
+        Debug.Log("Touched");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
