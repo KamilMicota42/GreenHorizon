@@ -8,6 +8,7 @@ public class EnemyAI : MonoBehaviour
     public Transform target;
 
     public float speed = 200f;
+    public float activationDistance = 10f; 
     public float nextWayPointDistance = 3f;
     public Transform enemyGFX;
     Path path;
@@ -29,7 +30,7 @@ public class EnemyAI : MonoBehaviour
 
     void UpdatePath()
     {
-        if(seeker.IsDone())
+        if(Vector2.Distance(rb.position, target.position) <= activationDistance && seeker.IsDone())
         {
             seeker.StartPath(rb.position, target.position, OnPathComplete);
         }
@@ -47,7 +48,7 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(path == null)
+        if(path == null || Vector2.Distance(rb.position, target.position) > activationDistance)
         {
             return;
         } 
