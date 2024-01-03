@@ -89,7 +89,6 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetButton("Jump") && isJumping)
         {
-            //jumpSound.Play();
             if (jumpTimeCounter > 0)
             {
                 
