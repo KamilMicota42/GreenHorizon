@@ -8,7 +8,9 @@ public class PlayerMovement : MonoBehaviour
     private BoxCollider2D coll;
     private SpriteRenderer sprite;
     private Animator anim;
-    private AudioSource jumpSound;
+
+    
+    private CheckpointMaster cm;
 
     [Header("Movement info")]
     [SerializeField] private float speed = 0f;
@@ -35,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask whatIsGround;
     private bool isGrounded = true;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioSource jumpSound;
+    [SerializeField] private AudioSource dashSound;
 
     private enum MovementState {idle, running, jumping, falling};
 
@@ -44,8 +49,10 @@ public class PlayerMovement : MonoBehaviour
         rb =  GetComponent<Rigidbody2D>();
         coll =  GetComponent<BoxCollider2D>();
         sprite =  GetComponent<SpriteRenderer>();
-        anim =  GetComponent<Animator>();
-        jumpSound = GetComponent<AudioSource>();
+        anim = GetComponent<Animator>();
+
+        cm = GameObject.FindGameObjectWithTag("CM").GetComponent<CheckpointMaster>();
+        transform.position = cm.lastCheckpointPosition;
     }
 
     // Update is called once per frame
@@ -102,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         
         if(Input.GetButtonDown("Dash") && canDash)
         {
+            dashSound.Play();
             StartCoroutine(Dash());
         }
 
