@@ -28,6 +28,6 @@ public class ChangeScene : MonoBehaviour
 
     void loadCurrentScene()
     {
-        SceneManager.LoadScene("Scene1");
+        SceneManager.LoadScene("HopeScene");
     }
 }
