@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Bat
   - Slime
+  - Vine
+  - CM
   layers:
   - Default
   - TransparentFX
