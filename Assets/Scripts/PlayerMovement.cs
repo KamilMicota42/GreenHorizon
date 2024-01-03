@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     private BoxCollider2D coll;
     private SpriteRenderer sprite;
     private Animator anim;
+    private AudioSource jumpSound;
 
     [Header("Movement info")]
     [SerializeField] private float speed = 0f;
@@ -44,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
         coll =  GetComponent<BoxCollider2D>();
         sprite =  GetComponent<SpriteRenderer>();
         anim =  GetComponent<Animator>();
+        jumpSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -71,15 +73,19 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetButtonDown("Jump") && isGrounded)
         {
+            jumpSound.Play();
             isJumping = true;
             jumpTimeCounter = jumpTime;
+            
             Jump();
         }
 
         if(Input.GetButton("Jump") && isJumping)
         {
-            if(jumpTimeCounter > 0)
+            //jumpSound.Play();
+            if (jumpTimeCounter > 0)
             {
+                
                 Jump();
                 jumpTimeCounter -= Time.deltaTime;
             }
@@ -121,7 +127,7 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-
+        
     }
 
     private IEnumerator Dash()
