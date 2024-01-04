@@ -8,13 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/Scenes/ChaseScene.unity
-    guid: 22f94f7d6e3914c79b11c60dd5a17581
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/PlantTests.unity
     guid: d7b90bc0fd896a64790b5ab3387a2069
   - enabled: 1
     path: Assets/Scenes/Scene1.unity
     guid: 49a40ca2f93584ecf92428bbb890191f
+  - enabled: 1
+    path: Assets/Scenes/ChaseScene.unity
+    guid: 22f94f7d6e3914c79b11c60dd5a17581
   m_configObjects: {}
