@@ -16,6 +16,8 @@ public class TouchController : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("Jump button pressed: " + _JumpButton.pressed);
+        Debug.Log("Dash button pressed: " + _DashButton.pressed);
         playerMovement.HandleJumpInput(_JumpButton.pressed);
         playerMovement.HandleDashInput(_DashButton.pressed);
     }
