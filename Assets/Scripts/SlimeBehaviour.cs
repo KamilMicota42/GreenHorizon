@@ -15,10 +15,10 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if(IsFacingRight())
         {
-            myRigidbody.velocity = new Vector2(moveSpeed, 0f);
+            myRigidbody.linearVelocity = new Vector2(moveSpeed, 0f);
         } else 
         {
-            myRigidbody.velocity = new Vector2(-moveSpeed, 0f);
+            myRigidbody.linearVelocity = new Vector2(-moveSpeed, 0f);
         }
     }
 
@@ -29,6 +29,6 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision) 
     {
-        transform.localScale = new Vector2((Mathf.Sign(myRigidbody.velocity.x)*5), 5f);
+        transform.localScale = new Vector2((Mathf.Sign(myRigidbody.linearVelocity.x)*5), 5f);
     }
 }

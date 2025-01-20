@@ -9,8 +9,11 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer sprite;
     private Animator anim;
 
-    
     private CheckpointMaster cm;
+
+    public Joystick joystick;
+    public bool isJumpPressed;
+    public bool isDashPressed;
 
     [Header("Movement info")]
     [SerializeField] private float speed = 0f;
@@ -64,8 +67,8 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        moveHorizontally = Input.GetAxisRaw("Horizontal");
-        moveVertical = Input.GetAxisRaw("Vertical");
+        moveHorizontally = joystick.Horizontal;
+        moveVertical = joystick.Vertical;
         
         if(moveHorizontally != 0f && speed < maxSpeed)
         {
@@ -78,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if(Input.GetButtonDown("Jump") && isGrounded)
+        if(isJumpPressed && isGrounded)
         {
             jumpSound.Play();
             isJumping = true;
@@ -87,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
             Jump();
         }
 
-        if(Input.GetButton("Jump") && isJumping)
+        if(isJumpPressed && isJumping)
         {
             if (jumpTimeCounter > 0)
             {
@@ -101,12 +104,12 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if(Input.GetButtonUp("Jump"))
+        if(!isJumpPressed)
         {
             isJumping = false;
         }
         
-        if(Input.GetButtonDown("Dash") && canDash)
+        if(isDashPressed && canDash)
         {
             dashSound.Play();
             StartCoroutine(Dash());
@@ -128,12 +131,12 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        rb.velocity = new Vector3(speed * moveHorizontally * Time.deltaTime, rb.velocity.y, 0f);
+        rb.linearVelocity = new Vector3(speed * moveHorizontally * Time.deltaTime, rb.linearVelocity.y, 0f);
     }
 
     private void Jump()
     {
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         
     }
 
@@ -143,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
-        rb.velocity = new Vector2(moveHorizontally * dashingPower, moveVertical * dashingPower*.75f);
+        rb.linearVelocity = new Vector2(moveHorizontally * dashingPower, moveVertical * dashingPower*.75f);
         yield return new WaitForSeconds(dashingTime);
         rb.gravityScale = originalGravity;
         isDashing = false;
@@ -173,15 +176,29 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.idle;
         } 
 
-        if(rb.velocity.y > .1f)
+        if(rb.linearVelocity.y > .1f)
         {
             state = MovementState.jumping;
         }
-        else if(rb.velocity.y < -.1f)
+        else if(rb.linearVelocity.y < -.1f)
         {
             state = MovementState.falling;
         }
 
         anim.SetInteger("state", (int)state);
+    }
+
+    public void HandleJumpInput(bool isPressed)
+    {
+        isJumpPressed = isPressed;
+    }
+
+    public void HandleDashInput(bool isPressed)
+    {
+        if(isPressed && canDash)
+        {
+            dashSound.Play();
+            StartCoroutine(Dash());
+        }
     }
 }
